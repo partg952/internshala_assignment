@@ -11,13 +11,12 @@ export default function Home() {
     const [preview,setPreview] = React.useState()
     const [dataGif,setDataGif] = React.useState([])
     const [posts,setPosts] = React.useState([])
-    console.log(posts)
     const message_ref = React.useRef()
     const [num,setNum] = React.useState(0)
     function fetchGifs(){
         axios('https://api.giphy.com/v1/gifs/trending?api_key=PwUwrZ8QN986Gre2qroRxupQBIwLm58B')
         .then((res)=>{
-            console.log(res.data.data);
+            
             setDataGif(res.data.data)
             
         })
@@ -25,7 +24,7 @@ export default function Home() {
     function getPosts(){
         axios('https://intern-api23.herokuapp.com/')
         .then((res)=>{
-            console.log(res.data)
+            
             setPosts(res.data.reverse())
         })
     }
@@ -80,15 +79,18 @@ export default function Home() {
                 </span>
                 <input type="text" name="" placeholder={`Whats On Your Mind?`} id='post-text' ref={message_ref} />
                 <input type="text" placeholder='Search a Gif(Press Enter To Search)' id='gif-search' onKeyPress={(e)=>{
-                    if(e.key === 'Enter' && e.target.value.length!=0){
-                        axios('https://api.giphy.com/v1/gifs/search?api_key=PwUwrZ8QN986Gre2qroRxupQBIwLm58B&q='+e.target.value)
-                        .then((res)=>{
-                            setDataGif(res.data.data)
-                        })
+                    if(e.key === 'Enter'){
+                        if(e.target.value.length!=0){
+                            axios('https://api.giphy.com/v1/gifs/search?api_key=PwUwrZ8QN986Gre2qroRxupQBIwLm58B&q='+e.target.value)
+                            .then((res)=>{
+                                setDataGif(res.data.data)
+                            })
+                        }
+                        else{
+                            fetchGifs();
+                        }
                     }
-                    else{
-                        fetchGifs();
-                    }
+                   
                 }}/>
                 <div id="gifs">
                     {
