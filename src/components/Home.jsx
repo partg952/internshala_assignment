@@ -26,7 +26,9 @@ export default function Home() {
         }
     }
     async function getPosts(){
-        var 
+        var data = await axios('https://intern-api23.herokuapp.com/')
+        console.log(data.data.reverse())
+        setPosts(data.data)
     }
     React.useEffect(()=>{
             getPosts();
