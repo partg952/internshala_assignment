@@ -7,26 +7,26 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import firebase  from 'firebase';
 import firebaseConfig from '../firebase';
 import axios from 'axios';
+import Menu from '@material-ui/icons/Menu'
 export default function Home() {
     const [preview,setPreview] = React.useState()
     const [dataGif,setDataGif] = React.useState([])
     const [posts,setPosts] = React.useState([])
     const message_ref = React.useRef()
     const [num,setNum] = React.useState(0)
-    function fetchGifs(){
-        axios('https://api.giphy.com/v1/gifs/trending?api_key=PwUwrZ8QN986Gre2qroRxupQBIwLm58B')
-        .then((res)=>{
-            
-            setDataGif(res.data.data)
-            
-        })
+    async function fetchGifs(){
+        try{
+
+            var data = await axios('https://api.giphy.com/v1/gifs/trending?api_key=PwUwrZ8QN986Gre2qroRxupQBIwLm58B')
+            console.log(data.data.data)
+            setDataGif(data.data.data)
+        }
+        catch{
+            alert('something wen wrong')
+        }
     }
-    function getPosts(){
-        axios('https://intern-api23.herokuapp.com/')
-        .then((res)=>{
-            
-            setPosts(res.data.reverse())
-        })
+    async function getPosts(){
+        var 
     }
     React.useEffect(()=>{
             getPosts();
@@ -36,8 +36,11 @@ export default function Home() {
     const close_button = React.useRef();
     return (
         <div>
+            <button id='open-menu'>
+                <Menu/>
+            </button>
           <nav>
-              <div>
+              <div> 
               <span>
                 <VideocamIcon/>
                 <p>Live Video</p>
@@ -53,16 +56,17 @@ export default function Home() {
             <PhotoAlbumIcon/>
             <p>Photo Album</p>
               </span>
+              
+              </div>
+          </nav>
+          <main>
+              <div id='post' ref={div_ref}>
               <button id='close-button'  ref={close_button}  onClick={()=>{
                   div_ref.current.style.display = 'none';
                   close_button.current.style.visibility = 'hidden';
               }}>
                   <CancelIcon/>
               </button>
-              </div>
-          </nav>
-          <main>
-              <div id='post' ref={div_ref}>
                 <span>
                     {
                     firebase.auth().currentUser!=null?
@@ -81,6 +85,7 @@ export default function Home() {
                 <input type="text" placeholder='Search a Gif(Press Enter To Search)' id='gif-search' onKeyPress={(e)=>{
                     if(e.key === 'Enter'){
                         if(e.target.value.length!=0){
+                            setDataGif([])
                             axios('https://api.giphy.com/v1/gifs/search?api_key=PwUwrZ8QN986Gre2qroRxupQBIwLm58B&q='+e.target.value)
                             .then((res)=>{
                                 setDataGif(res.data.data)
@@ -94,7 +99,7 @@ export default function Home() {
                 }}/>
                 <div id="gifs">
                     {
-                        dataGif.lenght!=0?
+                        dataGif.length!=0?
                         dataGif.map((items)=>{
                             return(
                                 <>
@@ -123,10 +128,13 @@ export default function Home() {
                     })
                 }}>POST</button>
               </div>
+              <div id='post_div'>
+                
               {
+                  posts.length!=0?
                   posts.map((items)=>{
                       return(
-                    <div id='messages'>
+                          <div id='messages'>
                         <span>
                             <img src={items.user_image} className='user-image' alt="" />
                             <strong>{items.user_name}</strong>
@@ -135,8 +143,11 @@ export default function Home() {
                         <img src={items.gif_url} alt="" id='messages-img'/>
                     </div>
                       )
-                  })
-              }
+                    })
+                    :
+                    <h1>Loading...</h1>
+                }
+                    </div>
           </main>
         </div>
     )

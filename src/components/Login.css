@@ -35,6 +35,8 @@ h1{
     align-items: center;
     justify-content:center;
     font-size:15px;
+    font-family:'Helvetica Neue',
+    sans-serif;
 }
 #sign-in-button:active{
     background-image: linear-gradient(to top,rgb(151, 151, 250),blue);
